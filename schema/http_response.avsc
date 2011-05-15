@@ -1,0 +1,13 @@
+{
+    "type": "record",
+    "name": "Response",
+    "namespace": "org.rflow.message.data.http",
+    "aliases": [],
+    "fields": [
+        {"name": "protocol",             "type": "string"},
+        {"name": "status_code",          "type": "int"},
+        {"name": "status_reason_phrase", "type": "string"},
+        {"name": "headers",              "type": {"type": "map", "values": "string"}},
+        {"name": "content",              "type": "bytes"}
+    ]
+}

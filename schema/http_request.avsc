@@ -1,0 +1,13 @@
+{
+    "type": "record",
+    "name": "Request",
+    "namespace": "org.rflow.message.data.http",
+    "aliases": [],
+    "fields": [
+        {"name": "method",       "type": "string"},
+        {"name": "uri",          "type": "string"},
+        {"name": "query_string", "type": ["string", "null"]},
+        {"name": "protocol",     "type": "string"},
+        {"name": "headers",      "type": {"type": "map", "values": ["string", "null"]}}
+    ]
+}
