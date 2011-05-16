@@ -29,7 +29,7 @@ class RFlow
           end
 
           # Default accessors
-          ['protocol', 'status_code', 'status_reason_phrase', 'headers', 'content'].each do |name|
+          ['protocol', 'status_reason_phrase', 'headers', 'content'].each do |name|
             define_method name do |*args|
               data_object[name]
             end
@@ -37,6 +37,16 @@ class RFlow
               data_object[name] = args.first
             end
           end
+
+          ['status_code'].each do |name|
+            define_method name do |*args|
+              data_object[name]
+            end
+            define_method :"#{name}=" do |*args|
+              data_object[name] = args.first.to_i
+            end
+          end
+          
         end
 
       end
