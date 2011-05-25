@@ -41,7 +41,7 @@ class RFlow
           # Attempt to send the data to each context match
           my_events.each do |processing_event|
             RFlow.logger.debug "Inspecting #{processing_event.context}"
-            ip, port, connection_signature = processing_event.context.split ':'
+            connection_signature = processing_event.context
             if connections[connection_signature]
               RFlow.logger.debug "Found connection for #{processing_event.context}"
               connections[connection_signature].send_http_response message
@@ -52,31 +52,33 @@ class RFlow
         class Connection < EventMachine::Connection
           include EventMachine::HttpServer
 
-          attr_accessor :server, :client_ip, :client_port
+          attr_accessor :server
+          attr_reader :client_ip, :client_port, :server_ip, :server_port
 
           def post_init
             @client_port, @client_ip = Socket.unpack_sockaddr_in(get_peername) rescue ["?", "?.?.?.?"]
-            RFlow.logger.debug "Connection from #{@client_ip}:#{@client_port}"
+            @server_port, @server_ip = Socket.unpack_sockaddr_in(get_sockname) rescue ["?", "?.?.?.?"]
+            RFlow.logger.debug "onnection from #{@client_ip}:#{@client_port} to #{@server_ip}:#{@server_port}"
             super
             no_environment_strings
           end
 
           
           def receive_data(data)
-            RFlow.logger.debug "Received #{data.bytesize} data from #{client_ip}:#{client_port}"
+            RFlow.logger.debug "Received #{data.bytesize} bytes of data from #{client_ip}:#{client_port} to #{@server_ip}:#{@server_port}"
             super
           end
           
           
           def process_http_request
-            RFlow.logger.debug "Received a full HTTP request from #{client_ip}:#{client_port}"
+            RFlow.logger.debug "Received a HTTP request from #{client_ip}:#{client_port} to #{@server_ip}:#{@server_port}"
             
             processing_event = RFlow::Message::ProcessingEvent.new(server.instance_uuid, Time.now.utc)
 
             request_message = RFlow::Message.new('RFlow::Message::Data::HTTP::Request')
             request_message.data.uri = @http_request_uri
 
-            processing_event.context = "#{client_ip}:#{client_port}:#{signature}"
+            processing_event.context = signature
             processing_event.completed_at = Time.now.utc
             request_message.provenance << processing_event
 
@@ -91,8 +93,8 @@ class RFlow
             # Default values
             resp.status                  = 200
             resp.content                 = ""
-            resp.headers["Content-Type"] = "text/html; charset=UTF-8"
-            resp.headers["Server"]       = "Apache/2.2.3 (CentOS)"
+            resp.headers["Content-Type"] = "text/html"
+            resp.headers["Server"]       = "Apache"
             
             if response_message
               resp.status  = response_message.data.status_code
@@ -109,8 +111,8 @@ class RFlow
           
           # Called when a connection is torn down for whatever reason.
           # Remove this connection from the server's list
-          def unbind
-            RFlow.logger.debug "Connection to lost"
+          def unbind(reason=nil)
+            RFlow.logger.debug "Disconnected from HTTP client #{client_ip}:#{client_port} due to '#{reason}'"
             server.connections.delete(self.signature)
           end
         end

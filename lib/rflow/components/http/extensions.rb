@@ -8,7 +8,7 @@ class RFlow
         # Need to be careful when extending to not clobber data already in data_object
         module HTTPRequestExtension
           def self.extended(base_data)
-            base_data.data_object ||= {'uri' => '/', 'method' => 'GET', 'protocol' => 'HTTP/1.0', 'headers'=>{}}
+            base_data.data_object ||= {'uri' => '/', 'method' => 'GET', 'protocol' => 'HTTP/1.0', 'headers'=>{}, 'content' => ''}
           end
 
           # Default accessors

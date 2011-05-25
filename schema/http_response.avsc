@@ -4,6 +4,11 @@
     "namespace": "org.rflow.message.data.http",
     "aliases": [],
     "fields": [
+        {"name": "client_ip",    "type": ["string", "null"]},
+        {"name": "client_port",  "type": ["int", "null"]},
+        {"name": "server_ip",    "type": ["string", "null"]},
+        {"name": "server_port",  "type": ["int", "null"]},
+
         {"name": "protocol",             "type": "string"},
         {"name": "status_code",          "type": "int"},
         {"name": "status_reason_phrase", "type": "string"},

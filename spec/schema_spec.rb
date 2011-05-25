@@ -14,7 +14,8 @@ describe 'RFlow::Message::Data::HTTP::Request Avro Schema' do
       'headers' => {
         'header1' => 'HEADER1',
         'header2' => 'HEADER2',
-      }
+      },
+      'content' => '',
     }
 
     expect {encode_avro(@schema_string, request)}.to_not raise_error
@@ -23,8 +24,12 @@ describe 'RFlow::Message::Data::HTTP::Request Avro Schema' do
     expect {decode_avro(@schema_string, avro_encoded_request)}.to_not raise_error
     decoded_request = decode_avro(@schema_string, avro_encoded_request)
 
-    decoded_request.should == request
-
+    decoded_request['method'].should == request['method']
+    decoded_request['uri'].should == request['uri']
+    decoded_request['query_string'].should == request['query_string']
+    decoded_request['protocol'].should == request['protocol']
+    decoded_request['headers'].should == request['headers']
+    decoded_request['content'].should == request['content']
   end
 end
 
@@ -52,7 +57,11 @@ describe 'RFlow::Message::Data::HTTP::Response Avro Schema' do
     expect {decode_avro(@schema_string, avro_encoded_response)}.to_not raise_error
     decoded_response = decode_avro(@schema_string, avro_encoded_response)
 
-    decoded_response.should == response
+    decoded_response['protocol'].should == response['protocol']
+    decoded_response['status_code'].should == response['status_code']
+    decoded_response['status_reason_phrase'].should == response['status_reason_phrase']
+    decoded_response['headers'].should == response['headers']
+    decoded_response['content'].should == response['content']
   end
 end
 
