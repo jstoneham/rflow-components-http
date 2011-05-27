@@ -1,0 +1,19 @@
+{
+    "type": "record",
+    "name": "Request",
+    "namespace": "org.rflow.message.data.http",
+    "aliases": [],
+    "fields": [
+        {"name": "client_ip",    "type": ["string", "null"]},
+        {"name": "client_port",  "type": ["int", "null"]},
+        {"name": "server_ip",    "type": ["string", "null"]},
+        {"name": "server_port",  "type": ["int", "null"]},
+
+        {"name": "method",       "type": "string"},
+        {"name": "uri",          "type": "string"},
+        {"name": "query_string", "type": ["string", "null"]},
+        {"name": "protocol",     "type": "string"},
+        {"name": "headers",      "type": {"type": "map", "values": ["string", "null"]}},
+        {"name": "content",      "type": ["bytes", "null"]}
+    ]
+}
