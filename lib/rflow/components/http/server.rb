@@ -58,7 +58,7 @@ class RFlow
           def post_init
             @client_port, @client_ip = Socket.unpack_sockaddr_in(get_peername) rescue ["?", "?.?.?.?"]
             @server_port, @server_ip = Socket.unpack_sockaddr_in(get_sockname) rescue ["?", "?.?.?.?"]
-            RFlow.logger.debug "onnection from #{@client_ip}:#{@client_port} to #{@server_ip}:#{@server_port}"
+            RFlow.logger.debug "Connection from #{@client_ip}:#{@client_port} to #{@server_ip}:#{@server_port}"
             super
             no_environment_strings
           end
