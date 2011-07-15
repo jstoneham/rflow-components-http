@@ -19,8 +19,13 @@ class RFlow
 
       # Load the data extensions
       RFlow::Configuration.add_available_data_extension('RFlow::Message::Data::HTTP::Request',
+                                                        RFlow::Components::HTTP::Extensions::IPConnectionExtension)
+      RFlow::Configuration.add_available_data_extension('RFlow::Message::Data::HTTP::Request',
                                                         RFlow::Components::HTTP::Extensions::HTTPRequestExtension)
+
       
+      RFlow::Configuration.add_available_data_extension('RFlow::Message::Data::HTTP::Response',
+                                                        RFlow::Components::HTTP::Extensions::IPConnectionExtension)
       RFlow::Configuration.add_available_data_extension('RFlow::Message::Data::HTTP::Response',
                                                         RFlow::Components::HTTP::Extensions::HTTPResponseExtension)
 

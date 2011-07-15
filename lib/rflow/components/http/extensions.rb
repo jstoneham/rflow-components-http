@@ -4,6 +4,19 @@ class RFlow
 
       # The set of extensions to add capability to HTTP data types
       module Extensions
+
+        module IPConnectionExtension
+          # Default accessors
+          # TODO: validate the stuffs
+          ['client_ip', 'client_port', 'server_ip', 'server_port'].each do |name|
+            define_method name do |*args|
+              data_object[name]
+            end
+            define_method :"#{name}=" do |*args|
+              data_object[name] = args.first
+            end
+          end
+        end
         
         # Need to be careful when extending to not clobber data already in data_object
         module HTTPRequestExtension
@@ -12,7 +25,7 @@ class RFlow
           end
 
           # Default accessors
-          ['method', 'uri', 'query_string', 'protocol', 'headers'].each do |name|
+          ['method', 'uri', 'query_string', 'protocol', 'headers', 'content'].each do |name|
             define_method name do |*args|
               data_object[name]
             end
