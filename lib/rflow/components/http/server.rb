@@ -76,8 +76,24 @@ class RFlow
             processing_event = RFlow::Message::ProcessingEvent.new(server.instance_uuid, Time.now.utc)
 
             request_message = RFlow::Message.new('RFlow::Message::Data::HTTP::Request')
-            request_message.data.uri = @http_request_uri
 
+            request_message.data.client_ip    = @client_ip
+            request_message.data.client_port  = @client_port
+            request_message.data.server_ip    = @server_ip
+            request_message.data.server_port  = @server_port
+
+            request_message.data.method       = @http_request_method
+            request_message.data.uri          = @http_request_uri
+            request_message.data.query_string = @http_query_string
+            request_message.data.protocol     = @http_protocol
+            request_message.data.content      = @http_post_content
+            request_message.data.headers      = {}
+            
+            @http_headers.split(/\0/).each do |header|
+              name, val = header.split(/:\s*/, 2)
+              request_message.data.headers[name] = val
+            end
+            
             processing_event.context = signature
             processing_event.completed_at = Time.now.utc
             request_message.provenance << processing_event
