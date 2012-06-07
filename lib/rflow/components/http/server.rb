@@ -116,7 +116,7 @@ class RFlow
               resp.status  = response_message.data.status_code
               resp.content = response_message.data.content
               response_message.data.headers.each do |header, value|
-                resp[headers] = value
+                resp[header] = value
               end
             end
 
