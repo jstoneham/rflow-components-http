@@ -31,20 +31,15 @@ class RFlow
         # This is done by inspecting the provenance, specifically the
         # context attribute that we stored originally
         def process_message(input_port, input_port_key, connection, message)
-          RFlow.logger.debug "Received a message"
+          RFlow.logger.debug { "#{self.class.name}: Received a #{message.data_type_name}" }
           return unless message.data_type_name == 'RFlow::Message::Data::HTTP::Response'
-
-          
-          RFlow.logger.debug "Received a HTTP::Response message, determining if its mine"
           my_events = message.provenance.find_all {|processing_event| processing_event.component_instance_uuid == instance_uuid}
-          RFlow.logger.debug "Found #{my_events.size} processing events from me"
-          # Attempt to send the data to each context match
+
           my_events.each do |processing_event|
-            RFlow.logger.debug "Inspecting #{processing_event.context}"
-            connection_signature = processing_event.context
-            if connections[connection_signature]
-              RFlow.logger.debug "Found connection for #{processing_event.context}"
-              connections[connection_signature].send_http_response message
+            connection_signature_string = processing_event.context.to_s
+            if connections[connection_signature_string]
+              RFlow.logger.debug { "#{self.class.name}: Found connection for #{connection_signature_string}" }
+              connections[connection_signature_string].send_http_response message
             end
           end
         end
@@ -58,20 +53,20 @@ class RFlow
           def post_init
             @client_port, @client_ip = Socket.unpack_sockaddr_in(get_peername) rescue ["?", "?.?.?.?"]
             @server_port, @server_ip = Socket.unpack_sockaddr_in(get_sockname) rescue ["?", "?.?.?.?"]
-            RFlow.logger.debug "Connection from #{@client_ip}:#{@client_port} to #{@server_ip}:#{@server_port}"
+            RFlow.logger.debug { "#{self.class.name}: Connection from #{@client_ip}:#{@client_port} to #{@server_ip}:#{@server_port}" }
             super
             no_environment_strings
           end
 
           
           def receive_data(data)
-            RFlow.logger.debug "Received #{data.bytesize} bytes of data from #{client_ip}:#{client_port} to #{@server_ip}:#{@server_port}"
+            RFlow.logger.debug { "#{self.class.name}: Received #{data.bytesize} bytes of data from #{client_ip}:#{client_port} to #{@server_ip}:#{@server_port}" }
             super
           end
           
           
           def process_http_request
-            RFlow.logger.debug "Received a HTTP request from #{client_ip}:#{client_port} to #{@server_ip}:#{@server_port}"
+            RFlow.logger.debug { "#{self.class.name}: Received HTTP request from #{client_ip}:#{client_port} to #{@server_ip}:#{@server_port} for #{@http_request_uri}" }
             
             processing_event = RFlow::Message::ProcessingEvent.new(server.instance_uuid, Time.now.utc)
 
@@ -94,7 +89,7 @@ class RFlow
               request_message.data.headers[name] = val
             end
             
-            processing_event.context = signature
+            processing_event.context = signature.to_s
             processing_event.completed_at = Time.now.utc
             request_message.provenance << processing_event
 
@@ -103,7 +98,6 @@ class RFlow
 
           
           def send_http_response(response_message=nil)
-            RFlow.logger.debug "Sending an HTTP response to #{client_ip}:#{client_port}"
             resp = EventMachine::DelegatedHttpResponse.new(self)
 
             # Default values
@@ -116,10 +110,12 @@ class RFlow
               resp.status  = response_message.data.status_code
               resp.content = response_message.data.content
               response_message.data.headers.each do |header, value|
-                resp[header] = value
+                resp.headers[header] = value
               end
             end
 
+            RFlow.logger.debug { "#{self.class.name}: Sending a HTTP response #{resp.status} to #{client_ip}:#{client_port}" }
+            
             resp.send_response
             close_connection_after_writing
           end
@@ -128,8 +124,8 @@ class RFlow
           # Called when a connection is torn down for whatever reason.
           # Remove this connection from the server's list
           def unbind(reason=nil)
-            RFlow.logger.debug "Disconnected from HTTP client #{client_ip}:#{client_port} due to '#{reason}'"
-            server.connections.delete(self.signature)
+            RFlow.logger.debug { "#{self.class.name}: Disconnected from HTTP client #{client_ip}:#{client_port}#{reason.nil? ? '' : " due to '#{reason}'"}" }
+            server.connections.delete(self.signature.to_s)
           end
         end
       end
