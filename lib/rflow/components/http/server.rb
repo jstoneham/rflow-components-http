@@ -10,9 +10,9 @@ class RFlow
       class Server < RFlow::Component
         input_port :response_port
         output_port :request_port
-        
+
         attr_accessor :port, :listen, :server_signature, :connections
-        
+
         def configure!(config)
           @listen = config['listen'] ? config['listen'] : '127.0.0.1'
           @port = config['port'] ? config['port'].to_i : 8000
@@ -43,7 +43,7 @@ class RFlow
             end
           end
         end
-        
+
         class Connection < EventMachine::Connection
           include EventMachine::HttpServer
 
@@ -58,16 +58,16 @@ class RFlow
             no_environment_strings
           end
 
-          
+
           def receive_data(data)
             RFlow.logger.debug { "#{self.class.name}: Received #{data.bytesize} bytes of data from #{client_ip}:#{client_port} to #{@server_ip}:#{@server_port}" }
             super
           end
-          
-          
+
+
           def process_http_request
             RFlow.logger.debug { "#{self.class.name}: Received HTTP request from #{client_ip}:#{client_port} to #{@server_ip}:#{@server_port} for #{@http_request_uri}" }
-            
+
             processing_event = RFlow::Message::ProcessingEvent.new(server.instance_uuid, Time.now.utc)
 
             request_message = RFlow::Message.new('RFlow::Message::Data::HTTP::Request')
@@ -83,12 +83,12 @@ class RFlow
             request_message.data.protocol     = @http_protocol
             request_message.data.content      = @http_post_content
             request_message.data.headers      = {}
-            
+
             @http_headers.split(/\0/).each do |header|
               name, val = header.split(/:\s*/, 2)
               request_message.data.headers[name] = val
             end
-            
+
             processing_event.context = signature.to_s
             processing_event.completed_at = Time.now.utc
             request_message.provenance << processing_event
@@ -96,7 +96,7 @@ class RFlow
             server.request_port.send_message request_message
           end
 
-          
+
           def send_http_response(response_message=nil)
             resp = EventMachine::DelegatedHttpResponse.new(self)
 
@@ -105,7 +105,7 @@ class RFlow
             resp.content                 = ""
             resp.headers["Content-Type"] = "text/html"
             resp.headers["Server"]       = "Apache"
-            
+
             if response_message
               resp.status  = response_message.data.status_code
               resp.content = response_message.data.content
@@ -115,12 +115,12 @@ class RFlow
             end
 
             RFlow.logger.debug { "#{self.class.name}: Sending a HTTP response #{resp.status} to #{client_ip}:#{client_port}" }
-            
+
             resp.send_response
             close_connection_after_writing
           end
 
-          
+
           # Called when a connection is torn down for whatever reason.
           # Remove this connection from the server's list
           def unbind(reason=nil)

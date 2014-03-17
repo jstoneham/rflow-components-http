@@ -18,7 +18,7 @@ describe RFlow::Components::HTTP::Extensions::HTTPRequestExtension do
     request.data.uri = 'POST'
     request.data.uri.should == 'POST'
   end
-  
+
 end
 
 describe RFlow::Components::HTTP::Extensions::HTTPResponseExtension do
@@ -28,7 +28,7 @@ describe RFlow::Components::HTTP::Extensions::HTTPResponseExtension do
 
   it "should work" do
     RFlow::Configuration.available_data_extensions['RFlow::Message::Data::HTTP::Response'].should include(described_class)
-    
+
     response = RFlow::Message.new('RFlow::Message::Data::HTTP::Response')
     response.data.protocol.should == 'HTTP/1.0'
     response.data.status_code.should == 200
@@ -39,5 +39,5 @@ describe RFlow::Components::HTTP::Extensions::HTTPResponseExtension do
     response.data.status_code = 404
     response.data.status_code.should == 404
   end
-  
+
 end

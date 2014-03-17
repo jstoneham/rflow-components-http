@@ -6,10 +6,10 @@ Gem::Specification.new do |s|
   s.name        = "rflow-components-http"
   s.version     = RFlow::Components::HTTP::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.required_ruby_version = '~> 1.9'
+  s.required_ruby_version = '>= 1.9'
   s.authors     = ["Michael L. Artz"]
   s.email       = ["michael.artz@redjack.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/redjack/rflow-components-http"
   s.summary     = %q{HTTP client and server components for the RFlow FBP framework}
   s.description = %q{HTTP client and server components for the RFlow FBP framework.  Also includes the necessary HTTP::Request and HTTP::Response message types}
 

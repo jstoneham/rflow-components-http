@@ -4,7 +4,7 @@ describe 'RFlow::Message::Data::HTTP::Request Avro Schema' do
   before(:each) do
     @schema_string = RFlow::Configuration.available_data_types['RFlow::Message::Data::HTTP::Request']['avro']
   end
-  
+
   it "should encode and decode an object" do
     request = {
       'method' => 'METHOD',
@@ -38,7 +38,7 @@ describe 'RFlow::Message::Data::HTTP::Response Avro Schema' do
   before(:each) do
     @schema_string = RFlow::Configuration.available_data_types['RFlow::Message::Data::HTTP::Response']['avro']
   end
-  
+
   it "should encode and decode an object" do
     response = {
       'protocol' => 'METHOD',

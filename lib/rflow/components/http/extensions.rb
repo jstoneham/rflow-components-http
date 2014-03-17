@@ -17,7 +17,7 @@ class RFlow
             end
           end
         end
-        
+
         # Need to be careful when extending to not clobber data already in data_object
         module HTTPRequestExtension
           def self.extended(base_data)
@@ -34,7 +34,7 @@ class RFlow
             end
           end
         end
-        
+
         # Need to be careful when extending to not clobber data already in data_object
         module HTTPResponseExtension
           def self.extended(base_data)
@@ -59,7 +59,7 @@ class RFlow
               data_object[name] = args.first.to_i
             end
           end
-          
+
         end
 
       end
