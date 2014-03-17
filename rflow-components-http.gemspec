@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Michael L. Artz"]
   s.email       = ["michael.artz@redjack.com"]
   s.homepage    = "https://github.com/redjack/rflow-components-http"
+  s.license     = "Apache-2.0"
   s.summary     = %q{HTTP client and server components for the RFlow FBP framework}
   s.description = %q{HTTP client and server components for the RFlow FBP framework.  Also includes the necessary HTTP::Request and HTTP::Response message types}
 
