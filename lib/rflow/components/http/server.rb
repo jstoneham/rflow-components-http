@@ -126,6 +126,7 @@ class RFlow
           def unbind(reason=nil)
             RFlow.logger.debug { "#{self.class.name}: Disconnected from HTTP client #{client_ip}:#{client_port}#{reason.nil? ? '' : " due to '#{reason}'"}" }
             server.connections.delete(self.signature.to_s)
+            super()
           end
         end
       end
