@@ -1,0 +1,21 @@
+language: ruby
+
+rvm:
+  - 1.9.3
+  - 2.0.0
+  - 2.1.0
+
+before_install:
+  - sudo apt-get install libtool autoconf automake uuid-dev build-essential
+  - wget http://download.zeromq.org/zeromq-3.2.4.tar.gz && tar zxvf zeromq-3.2.4.tar.gz && cd zeromq-3.2.4 && ./configure && make && sudo make install && cd ..
+# Only has 4.0.4, need 3.2 version due to old em-zeromq
+#  - sudo add-apt-repository -y ppa:chris-lea/zeromq
+#  - sudo apt-get update
+#  - sudo apt-get install libzmq3 libzmq3-dev
+
+script: bundle exec rspec spec
+
+notifications:
+  hipchat:
+    rooms:
+      secure: ZVFjNSjLq8mbEaEHTqKZWovWMR17Q8cs4q3spt2Q9Q7QJp+oRz4yFVKYZCRYPsh0+mnSo2Hl8qHn/JGhxI2HsiLQVHK/9tf4TNXmT3DL//fQPTSMEHUn5D0M0CNCAWFBIbUh2PocRJxhIdUEl3PS7U4mca2nDoA+V+r+HToTZpw=
